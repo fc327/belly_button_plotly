@@ -1,7 +1,15 @@
 function buildMetadata(sample) {
 
   // @TODO: Complete the following function that builds the metadata panel
+  var selector = Plotly.d3.select("#selDataset");
 
+  d3.json("/names").then((sampleNames) => {
+      sampleNames.forEach((sample) => {
+          selector
+              .append("option")
+              .text(sample)
+              .property("value", sample);
+      });
   // Use `d3.json` to fetch the metadata for a sample
     // Use d3 to select the panel with id of `#sample-metadata`
 
@@ -11,8 +19,6 @@ function buildMetadata(sample) {
     // Hint: Inside the loop, you will need to use d3 to append new
     // tags for each key-value in the metadata.
 
-    // BONUS: Build the Gauge Chart
-    // buildGauge(data.WFREQ);
 }
 
 function buildCharts(sample) {
@@ -22,6 +28,35 @@ function buildCharts(sample) {
     // @TODO: Build a Bubble Chart using the sample data
 
     // @TODO: Build a Pie Chart
+    function buildPie(sample) {
+  console.log("This is a pie chart")
+  var url = `/samples/${sample}`
+  d3.json(url).then((data) => {
+      var pieLabels = data.otu_ids.slice(0,10);
+      var pieValues = data.sample_values.slice(0,10);
+      var pieDescription = data.otu_labels.slice(0,10);
+      console.log(pieLabels)
+      console.log(pieValues)
+      console.log(pieDescription)
+
+      var layout = {
+        margin: { t: 0, l: 0 }
+      };
+
+      var data = [{
+          values: pieValues,
+          labels: pieLabels,
+          type: "pie",
+          name: "Top 10 Samples",
+          text_info: "percent",
+          text: pieDescription,
+          text_position: "inside",
+          hoverinfo: "label+value+text+percent" 
+      }];
+
+      Plotly.plot("pie", data, layout)
+  })
+}
     // HINT: You will need to use slice() to grab the top 10 sample_values,
     // otu_ids, and labels (10 each).
 }
